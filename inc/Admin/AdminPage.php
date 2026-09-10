@@ -368,18 +368,38 @@ final class AdminPage
             <div id="sitevero-tab-setup" class="sitevero-tab-panel">
                 <div class="sitevero-card">
                     <div class="sitevero-card-header">
-                        <h2>MCP Server Configuration Setup Guide</h2>
-                        <button type="button" id="sitevero-copy-config-btn" class="sitevero-btn sitevero-btn-primary">Copy Config</button>
+                        <h2>MCP Server Configuration (Cursor, Claude, Antigravity)</h2>
+                        <button type="button" id="sitevero-copy-config-btn" class="sitevero-btn sitevero-btn-primary">Copy HTTP Config</button>
                     </div>
                     <p style="margin-bottom: 16px; color: var(--sv-text-muted);">
-                        Sitevero provides a Universal MCP Endpoint powered by the bundled MCP Adapter &amp; WordPress Abilities API. Add this configuration to your AI client (Cursor, Claude Desktop, Antigravity) to connect:
+                        Sitevero transforms your WordPress site into a Universal Model Context Protocol (MCP) server. Use one of the configuration formats below to connect your AI agent:
                     </p>
 
-                    <h3 style="font-size: 14px; margin-bottom: 8px;">Standard MCP Client Configuration (Proxy / Stdio Bridge)</h3>
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">1. HTTP / SSE Remote Server Configuration (Cursor, Antigravity, MCP Clients)</h3>
+                    <p style="margin-bottom: 8px; font-size: 12px; color: var(--sv-text-muted);">Generate an Application Password under Users &rarr; Profile, then replace YOUR_APPLICATION_PASSWORD below:</p>
                     <div class="sitevero-code-box" style="margin-bottom: 20px;">
                         <pre id="sitevero-config-code"><?php
+                        $currentUser = function_exists('wp_get_current_user') ? wp_get_current_user()->user_login : 'admin';
+                        $httpConfig = [
+                            'mcpServers' => [
+                                'sitevero' => [
+                                    'type'    => 'http',
+                                    'url'     => $mcpEndpoint,
+                                    'headers' => [
+                                        'Authorization' => 'Basic ' . base64_encode($currentUser . ':YOUR_APPLICATION_PASSWORD'),
+                                    ],
+                                ],
+                            ],
+                        ];
+                        echo esc_html((string)json_encode($httpConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                        ?></pre>
+                    </div>
+
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">2. Stdio Bridge Configuration (Claude Desktop, Node Proxy)</h3>
+                    <div class="sitevero-code-box" style="margin-bottom: 20px;">
+                        <pre id="sitevero-stdio-code"><?php
                         $siteUrl = function_exists('home_url') ? home_url() : 'https://example.com';
-                        $config = [
+                        $stdioConfig = [
                             'mcpServers' => [
                                 'sitevero' => [
                                     'command' => 'node',
@@ -388,17 +408,17 @@ final class AdminPage
                                     ],
                                     'env'     => [
                                         'WP_URL'          => $siteUrl,
-                                        'WP_USERNAME'     => 'admin',
+                                        'WP_USERNAME'     => $currentUser,
                                         'WP_APP_PASSWORD' => 'xxxx xxxx xxxx xxxx',
                                     ],
                                 ],
                             ],
                         ];
-                        echo esc_html((string)json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                        echo esc_html((string)json_encode($stdioConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
                         ?></pre>
                     </div>
 
-                    <h3 style="font-size: 14px; margin-bottom: 8px;">Direct Remote MCP Endpoint URL</h3>
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">3. Direct Remote MCP Endpoint URL</h3>
                     <div style="background: var(--sv-surface-alt); border: 1px solid var(--sv-border); border-radius: 6px; padding: 12px 16px; font-family: monospace; font-size: 13px;">
                         <code><?php echo esc_url($mcpEndpoint); ?></code>
                     </div>
