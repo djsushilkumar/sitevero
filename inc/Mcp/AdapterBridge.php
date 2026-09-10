@@ -185,11 +185,25 @@ final class AdapterBridge
             $body = json_decode($raw, true) ?: [];
         }
 
-        $id = $body['id'] ?? 1;
+        $hasId = isset($body['id']);
+        $id = $body['id'] ?? null;
         $rpcMethod = (string) ($body['method'] ?? '');
         $params = (array) ($body['params'] ?? []);
 
+        // 1. Silent handling for MCP Notifications (e.g., notifications/initialized)
+        if (!$hasId || str_starts_with($rpcMethod, 'notifications/')) {
+            return class_exists('\WP_REST_Response') ? new \WP_REST_Response(null, 204) : null;
+        }
+
         switch ($rpcMethod) {
+            case 'ping':
+                $response = [
+                    'jsonrpc' => '2.0',
+                    'id'      => $id,
+                    'result'  => (object)[],
+                ];
+                break;
+
             case 'initialize':
                 $response = [
                     'jsonrpc' => '2.0',
@@ -206,6 +220,26 @@ final class AdapterBridge
                             'version' => defined('SITEVERO_VERSION') ? SITEVERO_VERSION : '1.0.0',
                         ],
                         'instructions'    => 'Sitevero Universal WordPress AI MCP Server providing discover, inspect, execute, and rollback tools.',
+                    ],
+                ];
+                break;
+
+            case 'resources/list':
+                $response = [
+                    'jsonrpc' => '2.0',
+                    'id'      => $id,
+                    'result'  => [
+                        'resources' => [],
+                    ],
+                ];
+                break;
+
+            case 'prompts/list':
+                $response = [
+                    'jsonrpc' => '2.0',
+                    'id'      => $id,
+                    'result'  => [
+                        'prompts' => [],
                     ],
                 ];
                 break;
