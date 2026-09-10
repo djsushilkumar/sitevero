@@ -49,16 +49,8 @@ final class Plugin
         }
         $this->booted = true;
 
-        if (did_action('plugins_loaded')) {
-            $this->onPluginsLoaded();
-        } else {
-            add_action('plugins_loaded', [$this, 'onPluginsLoaded'], 10);
-        }
-        if (did_action('init')) {
-            $this->onInit();
-        } else {
-            add_action('init', [$this, 'onInit'], 10);
-        }
+        add_action('plugins_loaded', [$this, 'onPluginsLoaded'], 10);
+        add_action('init', [$this, 'onInit'], 10);
     }
 
     /**

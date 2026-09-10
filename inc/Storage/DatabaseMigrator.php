@@ -24,12 +24,6 @@ final class DatabaseMigrator
         $snapshotsTable = $wpdb->prefix . 'sitevero_snapshots';
         $activityTable = $wpdb->prefix . 'sitevero_activity';
 
-        // Self-healing: if legacy prototype table exists without snapshot_uuid, recreate with official schema
-        $existingCols = $wpdb->get_col("SHOW COLUMNS FROM {$snapshotsTable}");
-        if (!empty($existingCols) && !in_array('snapshot_uuid', $existingCols, true)) {
-            $wpdb->query("DROP TABLE IF EXISTS {$snapshotsTable}");
-        }
-
         $sqlSnapshots = "CREATE TABLE {$snapshotsTable} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             snapshot_uuid VARCHAR(64) NOT NULL,

@@ -119,7 +119,7 @@ final class ContentModule extends BaseCapability
      */
     private function executeCreate(array $params): array
     {
-        $data = isset($params['data']) && is_array($params['data']) ? $params['data'] : $params;
+        $data = (array) ($params['data'] ?? []);
 
         $postData = [
             'post_title'   => (string) ($data['post_title'] ?? $data['title'] ?? ''),
@@ -222,7 +222,7 @@ final class ContentModule extends BaseCapability
             ];
         }
 
-        $data = isset($params['data']) && is_array($params['data']) ? $params['data'] : $params;
+        $data = (array) ($params['data'] ?? []);
         $updateFields = ['ID' => $postId];
         $updatedKeys = [];
 
