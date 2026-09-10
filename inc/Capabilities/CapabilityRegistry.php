@@ -68,6 +68,14 @@ final class CapabilityRegistry
     }
 
     /**
+     * Clear cached settings.
+     */
+    public function refreshSettings(): void
+    {
+        $this->settingsCache = null;
+    }
+
+    /**
      * Generate compact discovery catalog for sitevero_discover.
      *
      * @return array<int, array<string, mixed>>
