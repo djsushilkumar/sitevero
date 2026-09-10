@@ -91,9 +91,13 @@ if (!file_exists($zipFile)) {
 $fileSize = filesize($zipFile);
 $sha256 = hash_file('sha256', $zipFile);
 
+// Also copy to root for immediate access
+$rootZipFile = $rootDir . DIRECTORY_SEPARATOR . 'sitevero.zip';
+copy($zipFile, $rootZipFile);
+
 echo "\n=========================================================\n";
 echo "SUCCESS: Plugin package built successfully!\n";
-echo "Location:  dist/sitevero.zip\n";
+echo "Location:  dist/sitevero.zip & sitevero.zip\n";
 echo "Files:     {$numFiles} packaged items\n";
 echo "Size:      " . number_format($fileSize / 1024, 2) . " KB ({$fileSize} bytes)\n";
 echo "SHA-256:   {$sha256}\n";
