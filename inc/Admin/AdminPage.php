@@ -120,7 +120,7 @@ final class AdminPage
         }
 
         $totalCapabilities = count($capabilities);
-        $mcpEndpoint = function_exists('rest_url') ? rest_url('mcp/v1') : '/wp-json/mcp/v1';
+        $mcpEndpoint = function_exists('rest_url') ? rest_url('mcp/sitevero-server') : '/wp-json/mcp/sitevero-server';
 
         ?>
         <div class="wrap sitevero-wrap">
@@ -135,6 +135,21 @@ final class AdminPage
                 </div>
                 <div>
                     <span class="sitevero-version-badge">● v1.0.0-beta</span>
+                </div>
+            </div>
+
+            <!-- Server Status & Endpoint Bar -->
+            <div class="sitevero-card" style="margin-bottom: 24px; padding: 20px 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 14px;">
+                    <div style="font-weight: 600; font-size: 15px; color: var(--sv-text-main);">Server Status</div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <span class="sitevero-badge sitevero-badge-success" style="padding: 6px 12px; font-size: 13px;">● Sitevero Tools: <strong>Active</strong></span>
+                        <span class="sitevero-badge sitevero-badge-success" style="padding: 6px 12px; font-size: 13px;">● MCP Adapter: <strong>Active (bundled)</strong></span>
+                        <span class="sitevero-badge sitevero-badge-success" style="padding: 6px 12px; font-size: 13px;">● MCP Server: <strong>Enabled</strong></span>
+                    </div>
+                </div>
+                <div style="background: var(--sv-surface-alt); border: 1px solid var(--sv-border); border-radius: 6px; padding: 12px 16px; font-family: monospace; font-size: 13px; color: var(--sv-text-main);">
+                    <code><?php echo esc_url($mcpEndpoint); ?></code>
                 </div>
             </div>
 
@@ -357,24 +372,35 @@ final class AdminPage
                         <button type="button" id="sitevero-copy-config-btn" class="sitevero-btn sitevero-btn-primary">Copy Config</button>
                     </div>
                     <p style="margin-bottom: 16px; color: var(--sv-text-muted);">
-                        Add the configuration below to your AI client (Cursor, Claude Desktop, Antigravity) to establish connection with this WordPress site:
+                        Sitevero provides a Universal MCP Endpoint powered by the bundled MCP Adapter &amp; WordPress Abilities API. Add this configuration to your AI client (Cursor, Claude Desktop, Antigravity) to connect:
                     </p>
-                    <div class="sitevero-code-box">
+
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">Standard MCP Client Configuration (Proxy / Stdio Bridge)</h3>
+                    <div class="sitevero-code-box" style="margin-bottom: 20px;">
                         <pre id="sitevero-config-code"><?php
+                        $siteUrl = function_exists('home_url') ? home_url() : 'https://example.com';
                         $config = [
                             'mcpServers' => [
                                 'sitevero' => [
-                                    'command' => 'npx',
+                                    'command' => 'node',
                                     'args'    => [
-                                        '-y',
-                                        '@automattic/mcp-adapter',
-                                        '--url=' . (function_exists('home_url') ? home_url() : 'http://localhost'),
+                                        'path/to/sitevero-proxy.mjs',
+                                    ],
+                                    'env'     => [
+                                        'WP_URL'          => $siteUrl,
+                                        'WP_USERNAME'     => 'admin',
+                                        'WP_APP_PASSWORD' => 'xxxx xxxx xxxx xxxx',
                                     ],
                                 ],
                             ],
                         ];
                         echo esc_html((string)json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
                         ?></pre>
+                    </div>
+
+                    <h3 style="font-size: 14px; margin-bottom: 8px;">Direct Remote MCP Endpoint URL</h3>
+                    <div style="background: var(--sv-surface-alt); border: 1px solid var(--sv-border); border-radius: 6px; padding: 12px 16px; font-family: monospace; font-size: 13px;">
+                        <code><?php echo esc_url($mcpEndpoint); ?></code>
                     </div>
                 </div>
             </div>
