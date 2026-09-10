@@ -1,0 +1,23 @@
+{
+  "name": "sitevero/sitevero",
+  "description": "Universal WordPress AI MCP Plugin. Enables safe, bidirectional control by MCP-compatible AI agents.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Sitevero Team"
+    }
+  ],
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sitevero\\": "inc/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}

@@ -1,0 +1,11 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+/tmp/
